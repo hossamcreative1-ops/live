@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Life OS</title>
+<meta name="theme-color" content="#0E151C">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Life OS">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+
+
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EEF2F5;--surf:#fff;--surf2:#E3E9EE;--tx:#16222C;--mu:#6A7B88;--ac:#0F9D8A;--ac2:#6D5BD0;--warn:#D9822B;--bd:#D7DFE6;--sh:0 8px 24px rgba(30,50,70,.08);box-sizing:border-box;padding-top:env(safe-area-inset-top,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0E151C;--surf:#17212B;--surf2:#202C38;--tx:#E8EFF4;--mu:#8A9BA8;--ac:#4FD1BC;--ac2:#A394FF;--warn:#F0A04B;--bd:#273543;--sh:0 8px 24px rgba(0,0,0,.35)}}
+:root[data-theme="dark"]{--bg:#0E151C;--surf:#17212B;--surf2:#202C38;--tx:#E8EFF4;--mu:#8A9BA8;--ac:#4FD1BC;--ac2:#A394FF;--warn:#F0A04B;--bd:#273543;--sh:0 8px 24px rgba(0,0,0,.35)}
+*{box-sizing:border-box;margin:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{background:var(--bg);color:var(--tx);font-family:'IBM Plex Sans Arabic',system-ui,sans-serif;display:flex;justify-content:center}
+#app{width:100%;max-width:430px;height:100%;display:flex;flex-direction:column;position:relative;background:var(--bg)}
+header{display:flex;justify-content:space-between;align-items:center;padding:16px 20px 8px}
+header h1{font-size:22px;font-weight:700}
+header p{font-size:13px;color:var(--mu)}
+.ib{width:40px;height:40px;border-radius:50%;border:1px solid var(--bd);background:var(--surf);color:var(--tx);font-size:18px;cursor:pointer}
+main{flex:1;overflow-y:auto;padding:8px 20px 24px}
+section{display:none}section.on{display:block}
+nav{display:flex;background:var(--surf);border-top:1px solid var(--bd);padding:8px 8px calc(8px + env(safe-area-inset-bottom,0px))}
+nav button{flex:1;background:none;border:0;color:var(--mu);font:inherit;font-size:12px;padding:6px 0;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;border-radius:12px}
+nav button span{font-size:20px}
+nav button.on{color:var(--ac);font-weight:600}
+nav button:focus-visible,.ib:focus-visible,button:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+h2{font-size:16px;font-weight:600;margin:20px 0 10px}
+.total{background:linear-gradient(135deg,var(--ac2),var(--ac));color:#fff;border-radius:24px;padding:22px;box-shadow:var(--sh)}
+.total small{opacity:.85;font-size:13px}
+.total b{display:block;font-size:34px;font-weight:700;margin-top:4px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.pk{background:var(--surf);border-radius:20px;padding:14px;box-shadow:var(--sh);border:1px solid var(--bd);position:relative;overflow:hidden}
+.pk::before{content:"";position:absolute;inset-inline-start:0;top:0;bottom:0;width:5px;background:var(--c)}
+.pk .t{display:flex;align-items:center;gap:6px;font-size:14px;font-weight:600}
+.pk .a{font-size:19px;font-weight:700;margin:10px 0 8px}
+.pk .a small{font-size:11px;color:var(--mu);font-weight:400}
+.bar{height:6px;background:var(--surf2);border-radius:9px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--c,var(--ac));border-radius:9px;transition:width .5s}
+.row{display:flex;gap:8px;margin-top:12px}
+.row button{flex:1;border:0;border-radius:12px;padding:8px 0;font:inherit;font-weight:600;font-size:18px;cursor:pointer;background:var(--surf2);color:var(--tx)}
+.row button.p{background:var(--c);color:#fff}
+.card{background:var(--surf);border:1px solid var(--bd);border-radius:20px;padding:16px;box-shadow:var(--sh)}
+.ringwrap{display:flex;align-items:center;gap:18px}
+.ring{width:110px;height:110px;position:relative;flex:none}
+.ring svg{transform:rotate(-90deg)}
+.ring b{position:absolute;inset:0;display:grid;place-items:center;font-size:22px}
+.ringwrap p{color:var(--mu);font-size:13px;line-height:1.7}
+.ringwrap p strong{color:var(--tx);font-size:15px}
+.gl{margin-bottom:14px}.gl:last-child{margin-bottom:0}
+.gl div{display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px}
+.hb{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--bd)}
+.hb:last-child{border:0}
+.hb .n{font-weight:600;font-size:14px}
+.dots{display:flex;gap:4px;margin-top:6px}
+.dots i{width:12px;height:12px;border-radius:4px;background:var(--surf2)}
+.dots i.f{background:var(--ac)}
+.st{font-size:13px;color:var(--warn);font-weight:600;margin-inline-end:10px}
+.ck{border:1.5px solid var(--ac);background:none;color:var(--ac);border-radius:10px;padding:6px 12px;font:inherit;font-size:12px;cursor:pointer}
+.ck.d{background:var(--ac);color:#fff}
+.add{display:flex;gap:8px;flex-wrap:wrap}
+select{flex:1;font:inherit;color:var(--tx);background:var(--surf2);border:1px solid var(--bd);border-radius:12px;padding:10px}
+input[type=number]{flex:1}
+.seg{display:flex;background:var(--surf2);border-radius:14px;padding:4px;margin:8px 0 14px}
+.seg button{flex:1;border:0;background:none;color:var(--mu);font:inherit;font-size:13px;padding:8px 0;border-radius:10px;cursor:pointer}
+.seg .on{background:var(--surf);color:var(--tx);font-weight:600;box-shadow:var(--sh)}
+input,textarea{font:inherit;color:var(--tx);background:var(--surf);border:1px solid var(--bd);border-radius:14px;padding:12px;min-width:0}
+input:focus,textarea:focus{outline:2px solid var(--ac);border-color:transparent}
+.add input[type=text]{flex:1 1 100%}
+.add input[type=time]{flex:1}
+.pb{background:var(--ac);color:#fff;border:0;border-radius:14px;padding:12px 18px;font:inherit;font-weight:600;cursor:pointer}
+.task{display:flex;align-items:center;gap:12px;background:var(--surf);border:1px solid var(--bd);border-radius:16px;padding:12px 14px;margin-bottom:8px}
+.task input{width:22px;height:22px;accent-color:var(--ac);padding:0;flex:none}
+.task .x{flex:1;font-size:15px}
+.task.d .x{text-decoration:line-through;color:var(--mu)}
+.task time{font-size:12px;color:var(--ac2);background:var(--surf2);border-radius:8px;padding:3px 8px}
+.task button{background:none;border:0;color:var(--mu);font-size:18px;cursor:pointer}
+.empty{text-align:center;color:var(--mu);font-size:14px;padding:24px 0}
+textarea{width:100%;min-height:90px;resize:vertical;line-height:1.7}
+.chips{display:flex;gap:6px;overflow-x:auto;padding:10px 0 4px}
+.chip{flex:none;border:1px solid var(--bd);background:var(--surf);color:var(--mu);border-radius:20px;padding:5px 12px;font:inherit;font-size:13px;cursor:pointer}
+.chip.on{background:var(--ac2);color:#fff;border-color:var(--ac2)}
+.note{background:var(--surf);border:1px solid var(--bd);border-radius:18px;padding:14px;margin-top:10px;line-height:1.8;font-size:14px;white-space:pre-wrap}
+.note .m{font-size:11px;color:var(--mu);margin-top:8px;display:flex;justify-content:space-between}
+a.tg{color:var(--ac2);font-weight:600;cursor:pointer}
+a.lk{color:var(--ac);border-bottom:1px dashed var(--ac);cursor:pointer}
+a.lk.no{color:var(--warn);border-color:var(--warn)}
+.sheet{position:absolute;inset:0;background:rgba(5,10,15,.55);display:none;align-items:flex-end;z-index:5}
+.sheet.on{display:flex}
+.sheet>div{width:100%;background:var(--surf);border-radius:24px 24px 0 0;padding:20px 20px calc(20px + env(safe-area-inset-bottom,0px))}
+.sheet h3{font-size:17px;margin-bottom:12px}
+.sheet input{width:100%;font-size:22px;text-align:center}
+.q{display:flex;gap:8px;margin:12px 0}
+.q button{flex:1;border:1px solid var(--bd);background:var(--surf2);color:var(--tx);border-radius:12px;padding:9px 0;font:inherit;cursor:pointer}
+.toast{position:absolute;top:70px;inset-inline:20px;background:var(--tx);color:var(--bg);padding:12px 16px;border-radius:14px;font-size:14px;transform:translateY(-140%);transition:transform .3s;z-index:30}
+.toast.on{transform:none}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div id="app">
+<header><div><h1 id="ttl">المالية</h1><p id="sub"></p></div><div style="display:flex;gap:8px"><button class="ib" id="lk" aria-label="قفل التطبيق">🔒</button><button class="ib" id="th" aria-label="تبديل المظهر">◐</button></div></header>
+<main>
+<section id="s0" class="on"></section>
+<section id="s1"></section>
+<section id="s2"></section>
+<section id="s3"></section>
+<section id="s4"></section>
+</main>
+<nav>
+<button class="on" data-i="0"><span>◍</span>المالية</button>
+<button data-i="1"><span>◔</span>الإنجاز</button>
+<button data-i="2"><span>☑</span>المهام</button>
+<button data-i="3"><span>✎</span>الأفكار</button>
+<button data-i="4"><span>☰</span>المزيد</button>
+</nav>
+<div class="sheet" id="sh"><div>
+<h3 id="sht"></h3>
+<div id="tr" style="display:none;gap:8px;margin-bottom:12px"><select id="fr"></select><select id="to"></select></div>
+<input id="amt" type="number" inputmode="decimal" placeholder="المبلغ">
+<div class="q"><button data-q="50">50</button><button data-q="100">100</button><button data-q="500">500</button><button data-q="1000">1000</button></div>
+<div class="row"><button id="cx">إلغاء</button><button class="p" id="ok" style="--c:var(--ac)">تأكيد</button></div>
+</div></div>
+<div class="sheet" id="lc" style="align-items:center;background:var(--bg);z-index:20"><div style="border-radius:24px;margin:20px"><h3 id="lt"></h3><input id="pn" type="password" inputmode="numeric" maxlength="4" placeholder="••••"><div class="row"><button id="lx">إلغاء</button><button class="p" id="lo" style="--c:var(--ac)">تأكيد</button></div><button class="ck" id="lr" style="display:none;margin-top:10px">إزالة القفل</button></div></div>
+<div class="toast" id="toast"></div>
+</div>
+<script>
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const M=n=>S.hide?'••••':N(n);
+const N=n=>Number(n).toLocaleString('ar-EG'),P=n=>N(Math.round(n))+'٪';
+const esc=s=>s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const iso=k=>{const d=new Date();d.setDate(d.getDate()-k);return d.toLocaleDateString('en-CA')};
+const run=(a,b)=>Array.from({length:b-a+1},(_,i)=>iso(a+i));
+const streak=h=>{let k=h.d.includes(iso(0))?0:1,c=0;while(h.d.includes(iso(k))){c++;k++}return c};
+const S={log:[],sub:0,mood:'🙂',goals:[{t:'إنهاء كورس البرمجة',a:12,g:40,u:'درس'},{t:'ركض ١٠٠ كم',a:35,g:100,u:'كم'}],books:[{t:'العادات الذرية',p:120,n:320}],journal:[{d:iso(0),m:'🙂',x:'يوم هادي، خلّصت أهم مهمة وبدأت كتاب جديد.'}],
+ pk:[{n:'مدخرات',i:'🏦',a:12500,g:30000,c:'#0F9D8A',goal:1},{n:'استخدام يومي',i:'☕',a:3200,g:0,c:'#6D5BD0'},{n:'طوارئ',i:'🛟',a:8000,g:15000,c:'#D9822B',goal:1},{n:'أهداف',i:'🎯',a:4800,g:20000,c:'#D2557A',goal:1}],
+ tasks:[{t:'مراجعة ميزانية الأسبوع',tm:'10:00',d:1},{t:'مكالمة مع الفريق',tm:'14:30',d:0},{t:'قراءة ٢٠ صفحة',tm:'21:00',d:0}],
+ habits:[{n:'قراءة',d:run(1,6)},{n:'رياضة',d:[...run(1,2),iso(4),iso(6)]},{n:'ادخار يومي',d:run(1,9)}],
+ notes:[{x:'فكرة تطبيق لتتبع العادات مع مكافآت صغيرة #أفكار #مشاريع',t:'٠٩:١٢'},{x:'مراجعة ربط الميزانية بالأهداف، انظر [[فكرة تطبيق لتتبع العادات مع مكافآت صغيرة]] #مالية',t:'٠٩:٤٠'}],
+ tab:0,sel:null,q:'',tag:null
+};
+try{const j=localStorage.getItem('lifeos2');if(j)Object.assign(S,JSON.parse(j))}catch(e){}
+const save=()=>{try{localStorage.setItem('lifeos2',JSON.stringify(S))}catch(e){}};
+const titles=['المالية','الإنجاز','المهام','الأفكار','المزيد'];
+const subs=['مساحاتك المالية في مكان واحد','تقدّمك اليوم','رتّب يومك وذكّر نفسك','ملاحظاتك المترابطة','عاداتك وأهدافك وقراءتك ويومياتك'];
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');setTimeout(()=>t.classList.remove('on'),2600)}
+function fin(){
+ const tot=S.pk.reduce((s,p)=>s+p.a,0);
+ $('#s0').innerHTML=`<div class="total" style="position:relative"><small>الإجمالي الكلي</small><b>${M(tot)} ج.م</b><button class="ib" data-e="1" aria-label="إخفاء الأرصدة" style="position:absolute;top:14px;inset-inline-end:14px;background:rgba(255,255,255,.2);border:0;color:#fff">${S.hide?'🙈':'👁'}</button></div>
+ <button class="pb" data-x="1" style="width:100%;margin-top:12px;background:var(--surf);color:var(--tx);border:1px solid var(--bd)">⇄ تحويل بين المساحات</button>
+ <h2>مساحاتك</h2><div class="grid">${S.pk.map((p,i)=>`<div class="pk" style="--c:${p.c}"><div class="t"><span>${p.i}</span>${p.n}</div><div class="a">${M(p.a)} <small>ج.م</small></div>${p.g?`<div class="bar"><i style="width:${Math.min(100,p.a/p.g*100)}%"></i></div>`:'<div class="bar"><i style="width:100%;opacity:.25"></i></div>'}<div class="row"><button data-m="-${i}" aria-label="خصم">−</button><button class="p" data-m="${i}" aria-label="إضافة">+</button></div></div>`).join('')}</div>
+ <h2>آخر العمليات</h2><div class="card">${S.log.length?S.log.slice(-5).reverse().map((l,k)=>`<div class="hb"><div><div class="n">${S.pk[l.i].n}</div><small style="color:var(--mu)">${l.t}</small></div><div><b style="color:${l.v>0?'var(--ac)':'var(--warn)'}">${l.v>0?'+':'−'}${N(Math.abs(l.v))}</b>${k===0?' <button class="ck" data-u="1">تراجع</button>':''}</div></div>`).join(''):'<div class="empty" style="padding:8px 0">لا توجد عمليات بعد. استخدم + أو − على أي مساحة.</div>'}</div>`;
+}
+function ring(pc,col,sz=110,w=11){const r=(sz-w)/2,c=2*Math.PI*r;return`<svg width="${sz}" height="${sz}"><circle cx="${sz/2}" cy="${sz/2}" r="${r}" fill="none" stroke="var(--surf2)" stroke-width="${w}"/><circle cx="${sz/2}" cy="${sz/2}" r="${r}" fill="none" stroke="${col}" stroke-width="${w}" stroke-linecap="round" stroke-dasharray="${c}" stroke-dashoffset="${c*(1-pc/100)}" style="transition:stroke-dashoffset .6s"/></svg>`}
+function ana(){
+ const d=S.tasks.filter(t=>t.d).length,n=S.tasks.length,pc=n?d/n*100:0;
+ const gs=S.pk.filter(p=>p.goal);
+ $('#s1').innerHTML=`<h2 style="margin-top:8px">إنجاز اليوم</h2><div class="card ringwrap"><div class="ring">${ring(pc,'var(--ac)')}<b>${P(pc)}</b></div><p><strong>${N(d)} من ${N(n)} مهام</strong><br>${n&&d===n?'أنجزت كل مهامك اليوم 🎉':'تبقّى '+N(n-d)+' للوصول إلى 100٪'}</p></div>
+ <h2>أهداف التحويش</h2><div class="card">${gs.map(p=>{const v=Math.min(100,p.a/p.g*100);return`<div class="gl" style="--c:${p.c}"><div><span>${p.i} ${p.n}</span><b>${P(v)}</b></div><div class="bar" style="display:block"><i style="width:${v}%"></i></div></div>`}).join('')}</div>
+ <h2>الالتزام والعادات</h2><div class="card">${S.habits.map((h,i)=>`<div class="hb"><div><div class="n">${h.n}</div><div class="dots">${[6,5,4,3,2,1,0].map(k=>`<i class="${h.d.includes(iso(k))?'f':''}"></i>`).join('')}</div></div><div><span class="st">🔥 ${N(streak(h))} يوم</span><button class="ck ${h.d.includes(iso(0))?'d':''}" data-h="${i}">${h.d.includes(iso(0))?'تم اليوم ✓':'سجّل اليوم'}</button></div></div>`).join('')}</div>`;
+}
+function tasks(){
+ const l=[...S.tasks.entries()].sort((a,b)=>(a[1].d-b[1].d)||a[1].tm.localeCompare(b[1].tm));
+ $('#s2').innerHTML=`<div class="add"><input type="text" id="tt" placeholder="مهمة جديدة…"><input type="time" id="tm" value="12:00" aria-label="وقت التذكير"><button class="pb" id="ta">إضافة</button></div>
+ <h2>مهام اليوم</h2>${l.length?l.map(([i,t])=>`<div class="task ${t.d?'d':''}"><input type="checkbox" data-t="${i}" ${t.d?'checked':''} aria-label="تم"><span class="x">${esc(t.t)}</span><time>⏰ ${t.tm}</time><button data-r="${i}" aria-label="حذف">✕</button></div>`).join(''):'<div class="empty">لا توجد مهام. أضف أول مهمة لك أعلاه.</div>'}`;
+ $('#ta').onclick=()=>{const v=$('#tt').value.trim();if(!v)return toast('اكتب عنوان المهمة أولاً');S.tasks.push({t:v,tm:$('#tm').value||'12:00',d:0,al:0});save();tasks();toast('تمت إضافة المهمة وسيصلك تذكير في '+$('#tm').value)}
+}
+function fmt(x){return esc(x).replace(/#([\p{L}\p{N}_]+)/gu,'<a class="tg" data-g="$1">#$1</a>').replace(/\[\[([^\]]+)\]\]/g,(m,t)=>{const ok=S.notes.some(n=>n.x.startsWith(t));return`<a class="lk ${ok?'':'no'}" data-l="${t.replace(/"/g,'')}">${ok?'↗ ':'+ '}${t.length>28?t.slice(0,28)+'…':t}</a>`})}
+const nt=x=>{const k=x.indexOf('\n');return k<0?fmt(x):'<b style="font-size:15px">'+fmt(x.slice(0,k))+'</b>\n'+fmt(x.slice(k+1))};
+function notes(){
+ const tags=[...new Set(S.notes.flatMap(n=>(n.x.match(/#[\p{L}\p{N}_]+/gu)||[]).map(t=>t.slice(1))))];
+ const q=S.q.trim();
+ const l=S.notes.map((n,i)=>[i,n]).filter(([i,n])=>(!S.tag||n.x.includes('#'+S.tag))&&(!q||n.x.includes(q))).reverse();
+ const focus=document.activeElement&&document.activeElement.id;
+ $('#s3').innerHTML=`<textarea id="nx" placeholder="السطر الأول عنوان الفكرة، واستخدم #وسم و [[رابط]]"></textarea><button class="pb" id="na" style="width:100%;margin-top:8px">حفظ الفكرة</button>
+ <input id="nq" type="search" placeholder="🔍 ابحث في الأفكار" value="${esc(S.q)}" style="width:100%;margin-top:14px">
+ <div class="chips"><button class="chip ${S.tag?'':'on'}" data-g="">الكل</button>${tags.map(t=>`<button class="chip ${S.tag===t?'on':''}" data-g="${t}">#${t}</button>`).join('')}</div>
+ ${l.length?l.map(([i,n])=>{const bl=S.notes.filter((m,j)=>j!==i&&m.x.includes('[['+n.x.split('\n')[0]+']]')).length;return`<div class="note">${nt(n.x)}<div class="m"><span>${n.t}${bl?' · '+N(bl)+' روابط واردة':''}</span><a data-d="${i}" style="cursor:pointer">حذف</a></div></div>`}).join(''):'<div class="empty">لا نتائج. جرّب وسماً آخر أو اكتب فكرة جديدة.</div>'}`;
+ $('#na').onclick=()=>{const v=$('#nx').value.trim();if(!v)return toast('اكتب فكرتك أولاً');S.notes.push({x:v,t:new Date().toLocaleTimeString('ar-EG',{hour:'2-digit',minute:'2-digit'})});save();notes();toast('تم حفظ الفكرة')};
+ $('#nq').oninput=e=>{S.q=e.target.value;notes();const i=$('#nq');i.focus();i.setSelectionRange(i.value.length,i.value.length)};
+}
+const SUB=['العادات','الأهداف','القراءة','اليوميات'],MO=['😄','🙂','😐','😔','😡'];
+const stp=g=>Math.max(1,Math.round(g.g/10));
+const hab=()=>`<div class="add"><input type="text" id="f1" placeholder="عادة جديدة… مثل: شرب الماء"><button class="pb" id="fa">إضافة</button></div><h2>عاداتي</h2><div class="card">${S.habits.length?S.habits.map((h,i)=>`<div class="hb"><div><div class="n">${esc(h.n)}</div><div class="dots">${[6,5,4,3,2,1,0].map(k=>`<i class="${h.d.includes(iso(k))?'f':''}"></i>`).join('')}</div></div><div><span class="st">🔥 ${N(streak(h))}</span><button class="ck ${h.d.includes(iso(0))?'d':''}" data-h="${i}">${h.d.includes(iso(0))?'تم ✓':'سجّل'}</button> <button class="ck" data-hx="${i}" aria-label="حذف" style="border-color:var(--bd);color:var(--mu)">✕</button></div></div>`).join(''):'<div class="empty">أضف أول عادة.</div>'}</div>`;
+const goals=()=>`<div class="add"><input type="text" id="f1" placeholder="هدف جديد"><input type="number" id="f2" placeholder="الرقم المستهدف" inputmode="numeric"><input type="text" id="f3" placeholder="الوحدة (كم، درس…)" style="flex:1 1 40%"><button class="pb" id="fa">إضافة</button></div><h2>أهدافي</h2>${S.goals.length?S.goals.map((g,i)=>{const v=Math.min(100,g.a/g.g*100);return`<div class="card" style="margin-bottom:10px"><div class="hb" style="border:0;padding:0 0 8px"><b>${esc(g.t)}${v>=100?' 🏆':''}</b><b>${P(v)}</b></div><div class="bar"><i style="width:${v}%"></i></div><div class="hb" style="border:0;padding:10px 0 0"><small style="color:var(--mu)">${N(g.a)} / ${N(g.g)} ${esc(g.u||'')}</small><div class="row" style="margin:0"><button data-gm="${i}" style="padding:4px 14px">−</button><button class="p" data-gp="${i}" style="--c:var(--ac);padding:4px 14px">+${N(stp(g))}</button><button data-gx="${i}" style="padding:4px 12px;font-size:14px">✕</button></div></div></div>`}).join(''):'<div class="empty">حدّد أول هدف.</div>'}`;
+const books=()=>`<div class="add"><input type="text" id="f1" placeholder="اسم الكتاب أو الكورس"><input type="number" id="f2" placeholder="عدد الصفحات" inputmode="numeric"><button class="pb" id="fa">إضافة</button></div><h2>قراءتي</h2>${S.books.length?S.books.map((b,i)=>{const v=Math.min(100,b.p/b.n*100);return`<div class="card" style="margin-bottom:10px"><div class="hb" style="border:0;padding:0 0 8px"><b>📖 ${esc(b.t)}${v>=100?' ✅':''}</b><b>${P(v)}</b></div><div class="bar"><i style="width:${v}%;background:var(--ac2)"></i></div><div class="hb" style="border:0;padding:10px 0 0"><small style="color:var(--mu)">صفحة ${N(b.p)} من ${N(b.n)}</small><div class="row" style="margin:0"><button data-bp="${i}:10" style="padding:4px 10px;font-size:14px">+١٠</button><button data-bp="${i}:30" style="padding:4px 10px;font-size:14px">+٣٠</button><button data-bx="${i}" style="padding:4px 12px;font-size:14px">✕</button></div></div></div>`}).join(''):'<div class="empty">أضف أول كتاب.</div>'}`;
+const jour=()=>`<div class="chips">${MO.map(m=>`<button class="chip ${S.mood===m?'on':''}" data-mo="${m}" style="font-size:20px" aria-label="المزاج">${m}</button>`).join('')}</div><textarea id="f1" placeholder="يومك في سطرين…"></textarea><button class="pb" id="fa" style="width:100%;margin-top:8px">حفظ اليومية</button><h2>يومياتي</h2>${S.journal.length?S.journal.map((j,i)=>[i,j]).reverse().map(([i,j])=>`<div class="note"><b>${j.m} ${new Date(j.d+'T12:00').toLocaleDateString('ar-EG',{weekday:'long',day:'numeric',month:'long'})}</b>\n${esc(j.x)}<div class="m"><span></span><a data-jx="${i}" style="cursor:pointer">حذف</a></div></div>`).join(''):'<div class="empty">لا توجد يوميات بعد.</div>'}`;
+const ADD=[
+()=>{const v=$('#f1').value.trim();if(!v)return toast('اكتب اسم العادة');S.habits.push({n:v,d:[]});save();more();toast('تمت إضافة العادة')},
+()=>{const v=$('#f1').value.trim(),g=+$('#f2').value;if(!v||!(g>0))return toast('اكتب الهدف ورقماً مستهدفاً');S.goals.push({t:v,a:0,g,u:$('#f3').value.trim()});save();more();toast('تمت إضافة الهدف')},
+()=>{const v=$('#f1').value.trim(),n=+$('#f2').value;if(!v||!(n>0))return toast('اكتب الاسم وعدد الصفحات');S.books.push({t:v,p:0,n});save();more();toast('تمت الإضافة لقراءتك')},
+()=>{const v=$('#f1').value.trim();if(!v)return toast('اكتب يوميتك أولاً');S.journal.push({d:iso(0),m:S.mood||'🙂',x:v});save();more();toast('تم حفظ اليومية')}];
+function more(){$('#s4').innerHTML=`<div class="seg">${SUB.map((n,i)=>`<button class="${S.sub===i?'on':''}" data-s="${i}">${n}</button>`).join('')}</div>`+[hab,goals,books,jour][S.sub]();$('#fa').onclick=ADD[S.sub]}
+const R=[fin,ana,tasks,notes,more];
+function go(i){S.tab=i;$$('section').forEach((s,j)=>s.classList.toggle('on',j===i));$$('nav button').forEach((b,j)=>b.classList.toggle('on',j===i));$('#ttl').textContent=titles[i];$('#sub').textContent=subs[i];R[i]()}
+$$('nav button').forEach(b=>b.onclick=()=>go(+b.dataset.i));
+$('#th').onclick=()=>{const d=document.documentElement,cur=d.dataset.theme||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');d.dataset.theme=cur==='dark'?'light':'dark'};
+document.addEventListener('click',e=>{
+ const t=e.target.closest('[data-m],[data-h],[data-r],[data-g],[data-l],[data-d],[data-q],[data-u],[data-e],[data-x],[data-s],[data-hx],[data-gm],[data-gp],[data-gx],[data-bp],[data-bx],[data-mo],[data-jx]');if(!t)return;
+ const D=t.dataset;
+ if(D.m!==undefined){const v=+D.m,i=Math.abs(v);S.mode='m';$('#tr').style.display='none';S.sel=i;S.sign=D.m.startsWith('-')?-1:1;$('#sht').textContent=(S.sign>0?'إضافة إلى ':'خصم من ')+S.pk[i].n;$('#amt').value='';$('#sh').classList.add('on');$('#amt').focus()}
+ else if(D.u){let l=S.log.pop();if(l){do{S.pk[l.i].a-=l.v}while(l.g&&S.log.length&&S.log[S.log.length-1].g===l.g&&(l=S.log.pop()));save();fin();toast('تم التراجع عن العملية')}}
+ else if(D.s!==undefined){S.sub=+D.s;more()}
+ else if(D.hx!==undefined){S.habits.splice(+D.hx,1);save();more()}
+ else if(D.gm!==undefined){const g=S.goals[+D.gm];g.a=Math.max(0,g.a-stp(g));save();more()}
+ else if(D.gp!==undefined){const g=S.goals[+D.gp];g.a=Math.min(g.g,g.a+stp(g));save();more();if(g.a>=g.g)toast('🏆 حققت هدفك!')}
+ else if(D.gx!==undefined){S.goals.splice(+D.gx,1);save();more()}
+ else if(D.bp!==undefined){const[i,k]=D.bp.split(':'),b=S.books[+i];b.p=Math.min(b.n,b.p+ +k);save();more();if(b.p>=b.n)toast('✅ أنهيت الكتاب!')}
+ else if(D.bx!==undefined){S.books.splice(+D.bx,1);save();more()}
+ else if(D.mo){const x=$('#f1').value;S.mood=D.mo;more();$('#f1').value=x}
+ else if(D.jx!==undefined){S.journal.splice(+D.jx,1);save();more()}
+ else if(D.e){S.hide=!S.hide;save();fin()}
+ else if(D.x){S.mode='t';$('#sht').textContent='تحويل بين المساحات';const o=S.pk.map((p,i)=>`<option value="${i}">${p.n}</option>`).join('');$('#fr').innerHTML=o;$('#to').innerHTML=o;$('#to').value=1;$('#tr').style.display='flex';$('#amt').value='';$('#sh').classList.add('on')}
+ else if(D.q)$('#amt').value=(+$('#amt').value||0)+ +D.q;
+ else if(D.h!==undefined){const h=S.habits[+D.h];const t=iso(0);if(!h.d.includes(t)){h.d.push(t);toast('🔥 سلسلة '+N(streak(h))+' يوم، استمر!')}else h.d=h.d.filter(x=>x!==t);save();go(S.tab)}
+ else if(D.r!==undefined){S.tasks.splice(+D.r,1);save();tasks()}
+ else if(D.g!==undefined){S.tag=D.g||null;if(S.tab!==3)go(3);else notes()}
+ else if(D.l!==undefined){S.q=D.l.slice(0,30);S.tag=null;notes();window.scrollTo(0,0)}
+ else if(D.d!==undefined){S.notes.splice(+D.d,1);save();notes()}
+});
+document.addEventListener('change',e=>{const c=e.target.closest('[data-t]');if(c){S.tasks[+c.dataset.t].d=c.checked?1:0;save();tasks();toast(c.checked?'أحسنت! تم تحديث مؤشر الإنجاز':'أُعيدت المهمة')}});
+$('#cx').onclick=()=>$('#sh').classList.remove('on');
+$('#sh').onclick=e=>{if(e.target.id==='sh')$('#sh').classList.remove('on')};
+$('#ok').onclick=()=>{const v=+$('#amt').value;if(!(v>0))return toast('أدخل مبلغاً أكبر من صفر');if(S.mode==='t'){const a=+$('#fr').value,b=+$('#to').value;if(a===b)return toast('اختر مساحتين مختلفتين');if(v>S.pk[a].a)return toast('الرصيد غير كافٍ في '+S.pk[a].n);S.pk[a].a-=v;S.pk[b].a+=v;const g=Date.now(),t=new Date().toLocaleString('ar-EG',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});S.log.push({i:a,v:-v,t,g},{i:b,v:v,t,g});save();$('#sh').classList.remove('on');fin();return toast('تم تحويل '+N(v)+' ج.م')}const p=S.pk[S.sel];if(S.sign<0&&v>p.a)return toast('الرصيد غير كافٍ في '+p.n);p.a+=S.sign*v;S.log.push({i:S.sel,v:S.sign*v,t:new Date().toLocaleString('ar-EG',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})});save();$('#sh').classList.remove('on');fin();toast((S.sign>0?'تمت إضافة ':'تم خصم ')+N(v)+' ج.م')};
+setInterval(()=>{const n=new Date(),hm=String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0');S.tasks.forEach(t=>{if(!t.d&&t.tm===hm&&t.al!==hm){t.al=hm;toast('⏰ تذكير: '+t.t)}})},15000);
+const H=async x=>[...new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode('lifeos'+x)))].map(b=>b.toString(16).padStart(2,'0')).join('');
+let LM='';
+function lock(m){LM=m;$('#lc').classList.add('on');$('#pn').value='';$('#lt').textContent=m==='u'?'أدخل رمز القفل':'اختر رمزاً من ٤ أرقام';$('#lx').style.display=m==='u'?'none':'';$('#lr').style.display=(m==='s'&&S.pin)?'':'none';$('#pn').focus()}
+$('#lk').onclick=()=>lock('s');
+$('#lx').onclick=()=>$('#lc').classList.remove('on');
+$('#lr').onclick=()=>{S.pin=null;save();$('#lc').classList.remove('on');toast('تم إزالة القفل')};
+$('#lo').onclick=async()=>{const v=$('#pn').value.replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d));if(!/^\d{4}$/.test(v))return toast('الرمز يتكون من ٤ أرقام');let h;try{h=await H(v)}catch(e){return toast('القفل غير متاح في هذا المتصفح')}if(LM==='u'){if(h===S.pin)$('#lc').classList.remove('on');else{toast('رمز غير صحيح');$('#pn').value=''}}else{S.pin=h;save();$('#lc').classList.remove('on');toast('تم تفعيل القفل')}};
+if(S.pin)lock('u');
+go(S.tab||0);
+if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
+</script>
+</body>
+</html>

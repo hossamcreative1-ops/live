@@ -17,6 +17,8 @@
 
 
 
+
+
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#EEF2F5;--surf:#fff;--surf2:#E3E9EE;--tx:#16222C;--mu:#6A7B88;--ac:#0F9D8A;--ac2:#6D5BD0;--warn:#D9822B;--bd:#D7DFE6;--sh:0 8px 24px rgba(30,50,70,.08);box-sizing:border-box;padding-top:env(safe-area-inset-top,0px)}
@@ -76,6 +78,8 @@ input[type=number],input[type=date]{flex:1}
 .seg{display:flex;background:var(--surf2);border-radius:14px;padding:4px;margin:8px 0 14px}
 .seg button{flex:1;border:0;background:none;color:var(--mu);font:inherit;font-size:13px;padding:8px 0;border-radius:10px;cursor:pointer}
 .seg .on{background:var(--surf);color:var(--tx);font-weight:600;box-shadow:var(--sh)}
+.cc{position:absolute;width:150px;min-height:56px;padding:10px;background:var(--surf2);border:1.5px solid var(--bd);border-radius:14px;font-size:13px;line-height:1.6;white-space:pre-wrap;cursor:grab;user-select:none;-webkit-user-select:none;word-break:break-word}
+.cc.sel{border-color:var(--ac);box-shadow:var(--sh)}
 input,textarea{font:inherit;color:var(--tx);background:var(--surf);border:1px solid var(--bd);border-radius:14px;padding:12px;min-width:0}
 input:focus,textarea:focus{outline:2px solid var(--ac);border-color:transparent}
 .add input[type=text]{flex:1 1 100%}
@@ -148,10 +152,12 @@ const S={log:[],rp:'month',sub:0,mood:'🙂',goals:[{t:'إنهاء كورس ال
  pk:[{n:'مدخرات',i:'🏦',a:12500,g:30000,c:'#0F9D8A',goal:1},{n:'استخدام يومي',i:'☕',a:3200,g:0,c:'#6D5BD0'},{n:'طوارئ',i:'🛟',a:8000,g:15000,c:'#D9822B',goal:1},{n:'أهداف',i:'🎯',a:4800,g:20000,c:'#D2557A',goal:1}],
  tasks:[{t:'مراجعة ميزانية الأسبوع',tm:'10:00',d:1},{t:'مكالمة مع الفريق',tm:'14:30',d:0},{t:'قراءة ٢٠ صفحة',tm:'21:00',d:0}],
  habits:[{n:'قراءة',d:run(1,6)},{n:'رياضة',d:[...run(1,2),iso(4),iso(6)]},{n:'ادخار يومي',d:run(1,9)}],
- notes:[{x:'فكرة تطبيق لتتبع العادات مع مكافآت صغيرة #أفكار #مشاريع',t:'٠٩:١٢'},{x:'مراجعة ربط الميزانية بالأهداف، انظر [[فكرة تطبيق لتتبع العادات مع مكافآت صغيرة]] #مالية',t:'٠٩:٤٠'}],
+ notes:[{id:'n1',ti:'فكرة تطبيق العادات',x:'تطبيق لتتبع العادات مع مكافآت صغيرة #أفكار #مشاريع',t:'٠٩:١٢'},{id:'n2',ti:'ربط الميزانية بالأهداف',x:'انظر [[فكرة تطبيق العادات]] #مالية',t:'٠٩:٤٠'}],isub:0,open:null,edit:false,cv:{cards:[{id:'c1',x:20,y:20,t:'[[فكرة تطبيق العادات]]'},{id:'c2',x:170,y:130,t:'مكافآت صغيرة'},{id:'c3',x:20,y:200,t:'#مشاريع تجريبي'}],edges:[['c1','c2'],['c1','c3']],px:0,py:0,z:1},
  tab:0,sel:null,q:'',tag:null
 };
 try{const j=localStorage.getItem('lifeos2');if(j)Object.assign(S,JSON.parse(j))}catch(e){}
+S.notes.forEach(n=>{if(!n.id)n.id=nid();if(n.ti===undefined){const L=n.x.split('\n');n.ti=L[0].slice(0,50);n.x=L.slice(1).join('\n')}});S.lk=false;S.ce=null;S.sc=null;
+function nid(){return 'n'+Date.now().toString(36)+Math.random().toString(36).slice(2,5)}
 S.tasks.forEach(t=>{if(!t.dt)t.dt=iso(0);if(t.d&&!t.dd)t.dd=t.dt});
 const save=()=>{try{localStorage.setItem('lifeos2',JSON.stringify(S))}catch(e){}};
 const titles=['المالية','الإنجاز','المهام','الأفكار','المزيد'];
@@ -195,18 +201,38 @@ function tasks(){
  $('#s2').innerHTML=`<div class="add"><input type="text" id="tt" placeholder="مهمة جديدة…"><input type="date" id="td" value="${T}" aria-label="التاريخ"><input type="time" id="tm" value="12:00" aria-label="وقت التذكير"><button class="pb" id="ta">إضافة</button></div><h2>مهام اليوم</h2>${day.length?day.map(row).join(''):'<div class="empty">لا توجد مهام لليوم. أضف مهمة أعلاه.</div>'}${nxt.length?`<h2>قادمة</h2>${nxt.map(row).join('')}`:''}`;
  $('#ta').onclick=()=>{const v=$('#tt').value.trim();if(!v)return toast('اكتب عنوان المهمة أولاً');const dt=$('#td').value||T,tm=$('#tm').value||'12:00',n=new Date(),pass=dt<T||(dt===T&&n.getHours()*60+n.getMinutes()>=+tm.slice(0,2)*60+ +tm.slice(3,5));S.tasks.push({t:v,tm,dt,d:0,dd:null,al:pass?T:0});save();tasks();toast('تمت إضافة المهمة'+(pass?'':' وسيصلك تذكير في '+tm))}
 }
-const nt=x=>{const k=x.indexOf('\n');return k<0?fmt(x):'<b style="font-size:15px">'+fmt(x.slice(0,k))+'</b>\n'+fmt(x.slice(k+1))};
-function notes(){
- const tags=[...new Set(S.notes.flatMap(n=>(n.x.match(/#[\p{L}\p{N}_]+/gu)||[]).map(t=>t.slice(1))))];
- const q=S.q.trim();
- const l=S.notes.map((n,i)=>[i,n]).filter(([i,n])=>(!S.tag||n.x.includes('#'+S.tag))&&(!q||n.x.includes(q))).reverse();
- const focus=document.activeElement&&document.activeElement.id;
- $('#s3').innerHTML=`<textarea id="nx" placeholder="السطر الأول عنوان الفكرة، واستخدم #وسم و [[رابط]]"></textarea><button class="pb" id="na" style="width:100%;margin-top:8px">حفظ الفكرة</button>
- <input id="nq" type="search" placeholder="🔍 ابحث في الأفكار" value="${esc(S.q)}" style="width:100%;margin-top:14px">
- <div class="chips"><button class="chip ${S.tag?'':'on'}" data-g="">الكل</button>${tags.map(t=>`<button class="chip ${S.tag===t?'on':''}" data-g="${t}">#${t}</button>`).join('')}</div>
- ${l.length?l.map(([i,n])=>{const bl=S.notes.filter((m,j)=>j!==i&&m.x.includes('[['+n.x.split('\n')[0]+']]')).length;return`<div class="note">${nt(n.x)}<div class="m"><span>${n.t}${bl?' · '+N(bl)+' روابط واردة':''}</span><a data-d="${i}" style="cursor:pointer">حذف</a></div></div>`}).join(''):'<div class="empty">لا نتائج. جرّب وسماً آخر أو اكتب فكرة جديدة.</div>'}`;
- $('#na').onclick=()=>{const v=$('#nx').value.trim();if(!v)return toast('اكتب فكرتك أولاً');S.notes.push({x:v,t:new Date().toLocaleTimeString('ar-EG',{hour:'2-digit',minute:'2-digit'})});save();notes();toast('تم حفظ الفكرة')};
- $('#nq').oninput=e=>{S.q=e.target.value;notes();const i=$('#nq');i.focus();i.setSelectionRange(i.value.length,i.value.length)};
+const byTitle=t=>t.trim()?S.notes.find(n=>n.ti.trim()===t.trim()):null;
+const tagsOf=n=>((n.ti+' '+n.x).match(/#[\p{L}\p{N}_]+/gu)||[]).map(t=>t.slice(1));
+const linksOf=n=>[...(n.ti+' '+n.x).matchAll(/\[\[([^\]]+)\]\]/g)].map(m=>m[1].trim());
+function addNote(ti){const n={id:nid(),ti,x:'',t:new Date().toLocaleTimeString('ar-EG',{hour:'2-digit',minute:'2-digit'})};S.notes.push(n);save();return n}
+function fmt(x){return esc(x).replace(/#([\p{L}\p{N}_]+)/gu,'<a class="tg" data-g="$1">#$1</a>').replace(/\[\[([^\]]+)\]\]/g,(m,t)=>`<a class="lk ${byTitle(t.replace(/&amp;/g,'&'))?'':'no'}" data-l="${t.replace(/"/g,'')}">${byTitle(t)?'↗ ':'+ '}${t}</a>`)}
+function openNote(t){const n=byTitle(t)||addNote(t);S.open=n.id;S.edit=false;S.isub=0;if(S.tab!==3)go(3);else ideas()}
+function ideas(){
+ $('#s3').innerHTML=`<div class="seg">${['ملاحظات','كانفاس'].map((n,i)=>`<button class="${S.isub===i?'on':''}" data-is="${i}">${n}</button>`).join('')}</div><div id="iv"></div>`;
+ S.isub?canvas():S.open?editor():list();
+}
+function list(){
+ const tags=[...new Set(S.notes.flatMap(tagsOf))],q=S.q.trim();
+ const l=S.notes.filter(n=>(!S.tag||tagsOf(n).includes(S.tag))&&(!q||(n.ti+n.x).includes(q))).slice().reverse();
+ $('#iv').innerHTML=`<input id="nq" type="search" placeholder="🔍 ابحث في الأفكار" value="${esc(S.q)}" style="width:100%"><div class="chips"><button class="chip ${S.tag?'':'on'}" data-g="">الكل</button>${tags.map(t=>`<button class="chip ${S.tag===t?'on':''}" data-g="${t}">#${t}</button>`).join('')}</div><button class="pb" data-nn="1" style="width:100%;margin:6px 0">+ ملاحظة جديدة</button>${l.length?l.map(n=>`<div class="note" data-o="${n.id}" style="cursor:pointer"><b style="font-size:15px">${esc(n.ti||'بدون عنوان')}</b>\n<span style="color:var(--mu)">${esc(n.x.slice(0,90))}</span><div class="m"><span>${tagsOf(n).map(t=>'#'+t).join(' ')}</span><span>${N(S.notes.filter(m=>m!==n&&linksOf(m).includes(n.ti.trim())).length)} ↩</span></div></div>`).join(''):'<div class="empty">لا نتائج.</div>'}`;
+ $('#nq').oninput=e=>{S.q=e.target.value;list();const i=$('#nq');i.focus();i.setSelectionRange(i.value.length,i.value.length)};
+}
+function editor(){
+ const n=S.notes.find(m=>m.id===S.open);if(!n){S.open=null;return list()}
+ const bl=S.notes.filter(m=>m!==n&&linksOf(m).includes(n.ti.trim()));
+ $('#iv').innerHTML=`<div class="row" style="margin:0 0 10px"><button data-bk="1">→ رجوع</button><button data-ed="1">${S.edit?'👁 قراءة':'✎ تحرير'}</button><button data-dn="${n.id}" aria-label="حذف">🗑</button></div>${S.edit?`<input id="et" value="${esc(n.ti)}" placeholder="العنوان" style="width:100%;font-weight:700;font-size:17px"><textarea id="eb" style="min-height:220px;margin-top:8px" placeholder="اكتب… استخدم #وسم و [[رابط]]">${esc(n.x)}</textarea>`:`<h2 style="margin:6px 0">${esc(n.ti||'بدون عنوان')}</h2><div class="note" style="margin:0">${fmt(n.x)||'<span style="color:var(--mu)">فارغة، اضغط تحرير.</span>'}</div>`}<h2>روابط واردة (${N(bl.length)})</h2>${bl.length?bl.map(m=>`<a class="lk" data-l="${esc(m.ti)}" style="display:block;margin:6px 0">↗ ${esc(m.ti)}</a>`).join(''):'<div class="empty" style="padding:8px 0">لا توجد ملاحظات تشير إلى هذه الملاحظة.</div>'}`;
+ if(S.edit){const sv=()=>{n.ti=$('#et').value;n.x=$('#eb').value;save()};$('#et').oninput=sv;$('#eb').oninput=sv}
+}
+function cvEdges(){const C=S.cv,sz=id=>{const e=$('[data-c="'+id+'"]');return e?[e.offsetWidth/2,e.offsetHeight/2]:[75,28]};$('#cvs').innerHTML=C.edges.map(([a,b])=>{const A=C.cards.find(c=>c.id===a),B=C.cards.find(c=>c.id===b);if(!A||!B)return'';const[aw,ah]=sz(a),[bw,bh]=sz(b),ax=A.x+aw,ay=A.y+ah,bx=B.x+bw,by=B.y+bh,mx=(ax+bx)/2;return`<path d="M${ax} ${ay}C${mx} ${ay} ${mx} ${by} ${bx} ${by}" fill="none" stroke="var(--ac2)" stroke-width="2" opacity=".85"/>`}).join('')}
+function canvas(){
+ const C=S.cv,cur=C.cards.find(c=>c.id===S.ce);
+ $('#iv').innerHTML=`<div class="row" style="margin:0 0 8px"><button data-ca="1">+ بطاقة</button><button data-cz="1" aria-label="تكبير">＋</button><button data-cz="-1" aria-label="تصغير">－</button></div><div id="cvw" style="position:relative;height:58vh;overflow:hidden;border:1px solid var(--bd);border-radius:18px;background-color:var(--surf);background-image:radial-gradient(var(--bd) 1px,transparent 1px);background-size:22px 22px;touch-action:none"><div id="cvi" style="position:absolute;left:0;top:0;transform-origin:0 0;transform:translate(${C.px}px,${C.py}px) scale(${C.z})"><svg id="cvs" width="1" height="1" style="position:absolute;left:0;top:0;overflow:visible;pointer-events:none"></svg>${C.cards.map(c=>`<div class="cc ${S.sc===c.id?'sel':''}" data-c="${c.id}" style="left:${c.x}px;top:${c.y}px">${fmt(c.t)||'…'}</div>`).join('')}</div></div><div class="row" style="${S.sc?'':'display:none'}"><button data-ce="1">✎ تعديل</button><button data-cl="1" style="${S.lk?'background:var(--ac2);color:#fff':''}">🔗 ${S.lk?'اختر البطاقة…':'ربط'}</button><button data-cd="1">🗑 حذف</button></div>${cur?`<textarea id="cet" style="margin-top:8px;min-height:80px" placeholder="نص البطاقة… يدعم #وسم و [[رابط]]">${esc(cur.t)}</textarea><button class="pb" data-cx="1" style="width:100%;margin-top:6px">تم</button>`:''}<p style="color:var(--mu);font-size:12px;margin-top:8px">اسحب الخلفية للتحريك، واسحب البطاقة لنقلها، واضغط عليها لاختيارها.</p>`;
+ cvEdges();
+ if(cur)$('#cet').oninput=e=>{cur.t=e.target.value;save();$('[data-c="'+cur.id+'"]').innerHTML=fmt(cur.t)||'…';cvEdges()};
+ const w=$('#cvw');let m=null;
+ w.onpointerdown=e=>{const el=e.target.closest('.cc');m={c:el&&C.cards.find(k=>k.id===el.dataset.c),x:e.clientX,y:e.clientY,mv:0,t:e.target};if(w.setPointerCapture)w.setPointerCapture(e.pointerId)};
+ w.onpointermove=e=>{if(!m)return;const dx=e.clientX-m.x,dy=e.clientY-m.y;if(Math.abs(dx)+Math.abs(dy)>3)m.mv=1;m.x=e.clientX;m.y=e.clientY;if(m.c&&m.mv){m.c.x+=dx/C.z;m.c.y+=dy/C.z;const el=$('[data-c="'+m.c.id+'"]');el.style.left=m.c.x+'px';el.style.top=m.c.y+'px';cvEdges()}else if(!m.c){C.px+=dx;C.py+=dy;$('#cvi').style.transform=`translate(${C.px}px,${C.py}px) scale(${C.z})`}};
+ w.onpointerup=w.onpointercancel=()=>{if(!m)return;const k=m;m=null;save();if(k.mv)return;const a=k.t.closest&&k.t.closest('[data-l]');if(a)return openNote(a.dataset.l);const c=k.c;if(S.lk&&S.sc&&c&&c.id!==S.sc){const i=C.edges.findIndex(([p,q])=>(p===S.sc&&q===c.id)||(q===S.sc&&p===c.id));if(i>=0)C.edges.splice(i,1);else C.edges.push([S.sc,c.id]);S.lk=false;save()}else S.sc=c?c.id:null;if(!c)S.lk=false;canvas()};
 }
 const SUB=['العادات','الأهداف','القراءة','اليوميات'],MO=['😄','🙂','😐','😔','😡'];
 const stp=g=>Math.max(1,Math.round(g.g/10));
@@ -220,13 +246,13 @@ const ADD=[
 ()=>{const v=$('#f1').value.trim(),n=+$('#f2').value;if(!v||!(n>0))return toast('اكتب الاسم وعدد الصفحات');S.books.push({t:v,p:0,n});save();more();toast('تمت الإضافة لقراءتك')},
 ()=>{const v=$('#f1').value.trim();if(!v)return toast('اكتب يوميتك أولاً');S.journal.push({d:iso(0),m:S.mood||'🙂',x:v});save();more();toast('تم حفظ اليومية')}];
 function more(){$('#s4').innerHTML=`<div class="seg">${SUB.map((n,i)=>`<button class="${S.sub===i?'on':''}" data-s="${i}">${n}</button>`).join('')}</div>`+[hab,goals,books,jour][S.sub]();$('#fa').onclick=ADD[S.sub]}
-const R=[fin,ana,tasks,notes,more];
+const R=[fin,ana,tasks,ideas,more];
 document.addEventListener('change',e=>{if(e.target.id==='ra'||e.target.id==='rb'){S.ca=$('#ra').value;S.cb=$('#rb').value;save();ana()}});
 function go(i){S.tab=i;$$('section').forEach((s,j)=>s.classList.toggle('on',j===i));$$('nav button').forEach((b,j)=>b.classList.toggle('on',j===i));$('#ttl').textContent=titles[i];$('#sub').textContent=subs[i];R[i]()}
 $$('nav button').forEach(b=>b.onclick=()=>go(+b.dataset.i));
 $('#th').onclick=()=>{const d=document.documentElement,cur=d.dataset.theme||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');d.dataset.theme=cur==='dark'?'light':'dark'};
 document.addEventListener('click',e=>{
- const t=e.target.closest('[data-m],[data-h],[data-r],[data-g],[data-l],[data-d],[data-q],[data-rp],[data-ge],[data-u],[data-e],[data-x],[data-s],[data-hx],[data-gm],[data-gp],[data-gx],[data-bp],[data-bx],[data-mo],[data-jx]');if(!t)return;
+ const t=e.target.closest('[data-m],[data-h],[data-r],[data-g],[data-l],[data-d],[data-q],[data-is],[data-nn],[data-o],[data-bk],[data-ed],[data-dn],[data-ca],[data-cz],[data-ce],[data-cl],[data-cd],[data-cx],[data-rp],[data-ge],[data-u],[data-e],[data-x],[data-s],[data-hx],[data-gm],[data-gp],[data-gx],[data-bp],[data-bx],[data-mo],[data-jx]');if(!t)return;
  const D=t.dataset;
  if(D.m!==undefined){const v=+D.m,i=Math.abs(v);S.mode='m';$('#tr').style.display='none';S.sel=i;S.sign=D.m.startsWith('-')?-1:1;$('#sht').textContent=(S.sign>0?'إضافة إلى ':'خصم من ')+S.pk[i].n;$('#amt').value='';$('#sh').classList.add('on');$('#amt').focus()}
  else if(D.u){let l=S.log.pop();if(l){do{S.pk[l.i].a-=l.v}while(l.g&&S.log.length&&S.log[S.log.length-1].g===l.g&&(l=S.log.pop()));save();fin();toast('تم التراجع عن العملية')}}
@@ -246,9 +272,20 @@ document.addEventListener('click',e=>{
  else if(D.q)$('#amt').value=(+$('#amt').value||0)+ +D.q;
  else if(D.h!==undefined){const h=S.habits[+D.h];const t=iso(0);if(!h.d.includes(t)){h.d.push(t);toast('🔥 سلسلة '+N(streak(h))+' يوم، استمر!')}else h.d=h.d.filter(x=>x!==t);save();go(S.tab)}
  else if(D.r!==undefined){S.tasks.splice(+D.r,1);save();tasks()}
- else if(D.g!==undefined){S.tag=D.g||null;if(S.tab!==3)go(3);else notes()}
- else if(D.l!==undefined){S.q=D.l.slice(0,30);S.tag=null;notes();window.scrollTo(0,0)}
- else if(D.d!==undefined){S.notes.splice(+D.d,1);save();notes()}
+ else if(D.g!==undefined){S.tag=D.g||null;S.open=null;S.isub=0;if(S.tab!==3)go(3);else ideas()}
+ else if(D.l!==undefined)openNote(D.l)
+ else if(D.is!==undefined){S.isub=+D.is;ideas()}
+ else if(D.nn){const n=addNote('');S.open=n.id;S.edit=true;S.isub=0;ideas();$('#et').focus()}
+ else if(D.o){S.open=D.o;S.edit=false;ideas()}
+ else if(D.bk){S.open=null;ideas()}
+ else if(D.ed){S.edit=!S.edit;ideas()}
+ else if(D.dn){S.notes=S.notes.filter(n=>n.id!==D.dn);S.open=null;save();ideas()}
+ else if(D.ca){const C=S.cv,id=nid();C.cards.push({id,x:Math.round(-C.px/C.z+30+(C.cards.length%5)*18),y:Math.round(-C.py/C.z+30+(C.cards.length%5)*18),t:'فكرة جديدة'});S.sc=id;S.ce=id;save();canvas()}
+ else if(D.cz){const C=S.cv;C.z=Math.min(2,Math.max(.4,Math.round((C.z+ +D.cz*.2)*10)/10));save();canvas()}
+ else if(D.ce){S.ce=S.sc;canvas()}
+ else if(D.cx){S.ce=null;canvas()}
+ else if(D.cl){S.lk=!S.lk;if(S.lk)toast('اضغط على البطاقة المراد ربطها');canvas()}
+ else if(D.cd){const C=S.cv;C.cards=C.cards.filter(c=>c.id!==S.sc);C.edges=C.edges.filter(([p,q])=>p!==S.sc&&q!==S.sc);S.sc=null;S.ce=null;S.lk=false;save();canvas()}
 });
 document.addEventListener('change',e=>{const c=e.target.closest('[data-t]');if(c){const tk=S.tasks[+c.dataset.t];tk.d=c.checked?1:0;tk.dd=c.checked?iso(0):null;save();tasks();toast(c.checked?'أحسنت! تم تحديث مؤشر الإنجاز':'أُعيدت المهمة')}});
 $('#cx').onclick=()=>$('#sh').classList.remove('on');

@@ -14,6 +14,8 @@
 
 
 
+
+
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#EEF2F5;--surf:#fff;--surf2:#E3E9EE;--tx:#16222C;--mu:#6A7B88;--ac:#0F9D8A;--ac2:#6D5BD0;--warn:#D9822B;--bd:#D7DFE6;--sh:0 8px 24px rgba(30,50,70,.08);box-sizing:border-box;padding-top:env(safe-area-inset-top,0px)}
@@ -101,14 +103,14 @@ a.lk.no{color:var(--warn);border-color:var(--warn)}
 .sheet input{width:100%;font-size:22px;text-align:center}
 .q{display:flex;gap:8px;margin:12px 0}
 .q button{flex:1;border:1px solid var(--bd);background:var(--surf2);color:var(--tx);border-radius:12px;padding:9px 0;font:inherit;cursor:pointer}
-.toast{position:absolute;top:70px;inset-inline:20px;background:var(--tx);color:var(--bg);padding:12px 16px;border-radius:14px;font-size:14px;transform:translateY(-140%);transition:transform .3s;z-index:30}
-.toast.on{transform:none}
+.toast{position:absolute;top:70px;inset-inline:20px;background:var(--tx);color:var(--bg);padding:12px 16px;border-radius:14px;font-size:14px;transform:translateY(-200%);opacity:0;pointer-events:none;transition:transform .3s,opacity .3s;z-index:30}
+.toast.on{transform:none;opacity:1}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
 <body>
 <div id="app">
-<header><div><h1 id="ttl">المالية</h1><p id="sub"></p></div><div style="display:flex;gap:8px"><button class="ib" id="lk" aria-label="قفل التطبيق">🔒</button><button class="ib" id="th" aria-label="تبديل المظهر">◐</button></div></header>
+<header><div><h1 id="ttl">المالية</h1><p id="sub"></p></div><div style="display:flex;gap:8px"><button class="ib" id="nb" aria-label="الإشعارات">🔕</button><button class="ib" id="lk" aria-label="قفل التطبيق">🔒</button><button class="ib" id="th" aria-label="تبديل المظهر">◐</button></div></header>
 <main>
 <section id="s0" class="on"></section>
 <section id="s1"></section>
@@ -157,7 +159,7 @@ function fin(){
  const tot=S.pk.reduce((s,p)=>s+p.a,0);
  $('#s0').innerHTML=`<div class="total" style="position:relative"><small>الإجمالي الكلي</small><b>${M(tot)} ج.م</b><button class="ib" data-e="1" aria-label="إخفاء الأرصدة" style="position:absolute;top:14px;inset-inline-end:14px;background:rgba(255,255,255,.2);border:0;color:#fff">${S.hide?'🙈':'👁'}</button></div>
  <button class="pb" data-x="1" style="width:100%;margin-top:12px;background:var(--surf);color:var(--tx);border:1px solid var(--bd)">⇄ تحويل بين المساحات</button>
- <h2>مساحاتك</h2><div class="grid">${S.pk.map((p,i)=>`<div class="pk" style="--c:${p.c}"><div class="t"><span>${p.i}</span>${p.n}</div><div class="a">${M(p.a)} <small>ج.م</small></div>${p.g?`<div class="bar"><i style="width:${Math.min(100,p.a/p.g*100)}%"></i></div>`:'<div class="bar"><i style="width:100%;opacity:.25"></i></div>'}<div class="row"><button data-m="-${i}" aria-label="خصم">−</button><button class="p" data-m="${i}" aria-label="إضافة">+</button></div></div>`).join('')}</div>
+ <h2>مساحاتك</h2><div class="grid">${S.pk.map((p,i)=>`<div class="pk" style="--c:${p.c}"><div class="t"><span>${p.i}</span>${p.n}<button class="ib" data-ge="${i}" aria-label="تعديل الهدف" style="margin-inline-start:auto;width:28px;height:28px;font-size:13px">✎</button></div><div class="a">${M(p.a)} <small>ج.م</small></div>${p.g?`<div class="bar"><i style="width:${Math.min(100,p.a/p.g*100)}%"></i></div>`:'<div class="bar"><i style="width:100%;opacity:.25"></i></div>'}<div class="row"><button data-m="-${i}" aria-label="خصم">−</button><button class="p" data-m="${i}" aria-label="إضافة">+</button></div></div>`).join('')}</div>
  <h2>آخر العمليات</h2><div class="card">${S.log.length?S.log.slice(-5).reverse().map((l,k)=>`<div class="hb"><div><div class="n">${S.pk[l.i].n}</div><small style="color:var(--mu)">${l.t}</small></div><div><b style="color:${l.v>0?'var(--ac)':'var(--warn)'}">${l.v>0?'+':'−'}${N(Math.abs(l.v))}</b>${k===0?' <button class="ck" data-u="1">تراجع</button>':''}</div></div>`).join(''):'<div class="empty" style="padding:8px 0">لا توجد عمليات بعد. استخدم + أو − على أي مساحة.</div>'}</div>`;
 }
 function ring(pc,col,sz=110,w=11){const r=(sz-w)/2,c=2*Math.PI*r;return`<svg width="${sz}" height="${sz}"><circle cx="${sz/2}" cy="${sz/2}" r="${r}" fill="none" stroke="var(--surf2)" stroke-width="${w}"/><circle cx="${sz/2}" cy="${sz/2}" r="${r}" fill="none" stroke="${col}" stroke-width="${w}" stroke-linecap="round" stroke-dasharray="${c}" stroke-dashoffset="${c*(1-pc/100)}" style="transition:stroke-dashoffset .6s"/></svg>`}
@@ -172,7 +174,7 @@ function tasks(){
  const l=[...S.tasks.entries()].sort((a,b)=>(a[1].d-b[1].d)||a[1].tm.localeCompare(b[1].tm));
  $('#s2').innerHTML=`<div class="add"><input type="text" id="tt" placeholder="مهمة جديدة…"><input type="time" id="tm" value="12:00" aria-label="وقت التذكير"><button class="pb" id="ta">إضافة</button></div>
  <h2>مهام اليوم</h2>${l.length?l.map(([i,t])=>`<div class="task ${t.d?'d':''}"><input type="checkbox" data-t="${i}" ${t.d?'checked':''} aria-label="تم"><span class="x">${esc(t.t)}</span><time>⏰ ${t.tm}</time><button data-r="${i}" aria-label="حذف">✕</button></div>`).join(''):'<div class="empty">لا توجد مهام. أضف أول مهمة لك أعلاه.</div>'}`;
- $('#ta').onclick=()=>{const v=$('#tt').value.trim();if(!v)return toast('اكتب عنوان المهمة أولاً');S.tasks.push({t:v,tm:$('#tm').value||'12:00',d:0,al:0});save();tasks();toast('تمت إضافة المهمة وسيصلك تذكير في '+$('#tm').value)}
+ $('#ta').onclick=()=>{const v=$('#tt').value.trim();if(!v)return toast('اكتب عنوان المهمة أولاً');S.tasks.push({t:v,tm:$('#tm').value||'12:00',d:0,al:(()=>{const n=new Date(),[h,m]=($('#tm').value||'12:00').split(':');return n.getHours()*60+n.getMinutes()>=+h*60+ +m?iso(0):0})()});save();tasks();toast('تمت إضافة المهمة وسيصلك تذكير في '+$('#tm').value)}
 }
 function fmt(x){return esc(x).replace(/#([\p{L}\p{N}_]+)/gu,'<a class="tg" data-g="$1">#$1</a>').replace(/\[\[([^\]]+)\]\]/g,(m,t)=>{const ok=S.notes.some(n=>n.x.startsWith(t));return`<a class="lk ${ok?'':'no'}" data-l="${t.replace(/"/g,'')}">${ok?'↗ ':'+ '}${t.length>28?t.slice(0,28)+'…':t}</a>`})}
 const nt=x=>{const k=x.indexOf('\n');return k<0?fmt(x):'<b style="font-size:15px">'+fmt(x.slice(0,k))+'</b>\n'+fmt(x.slice(k+1))};
@@ -205,7 +207,7 @@ function go(i){S.tab=i;$$('section').forEach((s,j)=>s.classList.toggle('on',j===
 $$('nav button').forEach(b=>b.onclick=()=>go(+b.dataset.i));
 $('#th').onclick=()=>{const d=document.documentElement,cur=d.dataset.theme||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');d.dataset.theme=cur==='dark'?'light':'dark'};
 document.addEventListener('click',e=>{
- const t=e.target.closest('[data-m],[data-h],[data-r],[data-g],[data-l],[data-d],[data-q],[data-u],[data-e],[data-x],[data-s],[data-hx],[data-gm],[data-gp],[data-gx],[data-bp],[data-bx],[data-mo],[data-jx]');if(!t)return;
+ const t=e.target.closest('[data-m],[data-h],[data-r],[data-g],[data-l],[data-d],[data-q],[data-ge],[data-u],[data-e],[data-x],[data-s],[data-hx],[data-gm],[data-gp],[data-gx],[data-bp],[data-bx],[data-mo],[data-jx]');if(!t)return;
  const D=t.dataset;
  if(D.m!==undefined){const v=+D.m,i=Math.abs(v);S.mode='m';$('#tr').style.display='none';S.sel=i;S.sign=D.m.startsWith('-')?-1:1;$('#sht').textContent=(S.sign>0?'إضافة إلى ':'خصم من ')+S.pk[i].n;$('#amt').value='';$('#sh').classList.add('on');$('#amt').focus()}
  else if(D.u){let l=S.log.pop();if(l){do{S.pk[l.i].a-=l.v}while(l.g&&S.log.length&&S.log[S.log.length-1].g===l.g&&(l=S.log.pop()));save();fin();toast('تم التراجع عن العملية')}}
@@ -220,6 +222,7 @@ document.addEventListener('click',e=>{
  else if(D.jx!==undefined){S.journal.splice(+D.jx,1);save();more()}
  else if(D.e){S.hide=!S.hide;save();fin()}
  else if(D.x){S.mode='t';$('#sht').textContent='تحويل بين المساحات';const o=S.pk.map((p,i)=>`<option value="${i}">${p.n}</option>`).join('');$('#fr').innerHTML=o;$('#to').innerHTML=o;$('#to').value=1;$('#tr').style.display='flex';$('#amt').value='';$('#sh').classList.add('on')}
+ else if(D.ge!==undefined){S.mode='g';S.sel=+D.ge;const p=S.pk[S.sel];$('#sht').textContent='الهدف المستهدف لـ '+p.n+' (0 لإلغائه)';$('#tr').style.display='none';$('#amt').value=p.g||'';$('#sh').classList.add('on')}
  else if(D.q)$('#amt').value=(+$('#amt').value||0)+ +D.q;
  else if(D.h!==undefined){const h=S.habits[+D.h];const t=iso(0);if(!h.d.includes(t)){h.d.push(t);toast('🔥 سلسلة '+N(streak(h))+' يوم، استمر!')}else h.d=h.d.filter(x=>x!==t);save();go(S.tab)}
  else if(D.r!==undefined){S.tasks.splice(+D.r,1);save();tasks()}
@@ -230,8 +233,13 @@ document.addEventListener('click',e=>{
 document.addEventListener('change',e=>{const c=e.target.closest('[data-t]');if(c){S.tasks[+c.dataset.t].d=c.checked?1:0;save();tasks();toast(c.checked?'أحسنت! تم تحديث مؤشر الإنجاز':'أُعيدت المهمة')}});
 $('#cx').onclick=()=>$('#sh').classList.remove('on');
 $('#sh').onclick=e=>{if(e.target.id==='sh')$('#sh').classList.remove('on')};
-$('#ok').onclick=()=>{const v=+$('#amt').value;if(!(v>0))return toast('أدخل مبلغاً أكبر من صفر');if(S.mode==='t'){const a=+$('#fr').value,b=+$('#to').value;if(a===b)return toast('اختر مساحتين مختلفتين');if(v>S.pk[a].a)return toast('الرصيد غير كافٍ في '+S.pk[a].n);S.pk[a].a-=v;S.pk[b].a+=v;const g=Date.now(),t=new Date().toLocaleString('ar-EG',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});S.log.push({i:a,v:-v,t,g},{i:b,v:v,t,g});save();$('#sh').classList.remove('on');fin();return toast('تم تحويل '+N(v)+' ج.م')}const p=S.pk[S.sel];if(S.sign<0&&v>p.a)return toast('الرصيد غير كافٍ في '+p.n);p.a+=S.sign*v;S.log.push({i:S.sel,v:S.sign*v,t:new Date().toLocaleString('ar-EG',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})});save();$('#sh').classList.remove('on');fin();toast((S.sign>0?'تمت إضافة ':'تم خصم ')+N(v)+' ج.م')};
-setInterval(()=>{const n=new Date(),hm=String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0');S.tasks.forEach(t=>{if(!t.d&&t.tm===hm&&t.al!==hm){t.al=hm;toast('⏰ تذكير: '+t.t)}})},15000);
+$('#ok').onclick=()=>{const v=+$('#amt').value;if(S.mode==='g'){if(isNaN(v)||v<0)return toast('أدخل رقماً صحيحاً');const p=S.pk[S.sel];p.g=v;p.goal=v>0?1:0;save();$('#sh').classList.remove('on');fin();return toast(v>0?'تم تحديث الهدف':'تم إلغاء الهدف')}if(!(v>0))return toast('أدخل مبلغاً أكبر من صفر');if(S.mode==='t'){const a=+$('#fr').value,b=+$('#to').value;if(a===b)return toast('اختر مساحتين مختلفتين');if(v>S.pk[a].a)return toast('الرصيد غير كافٍ في '+S.pk[a].n);S.pk[a].a-=v;S.pk[b].a+=v;const g=Date.now(),t=new Date().toLocaleString('ar-EG',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});S.log.push({i:a,v:-v,t,g},{i:b,v:v,t,g});save();$('#sh').classList.remove('on');fin();return toast('تم تحويل '+N(v)+' ج.م')}const p=S.pk[S.sel];if(S.sign<0&&v>p.a)return toast('الرصيد غير كافٍ في '+p.n);p.a+=S.sign*v;S.log.push({i:S.sel,v:S.sign*v,t:new Date().toLocaleString('ar-EG',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})});save();$('#sh').classList.remove('on');fin();toast((S.sign>0?'تمت إضافة ':'تم خصم ')+N(v)+' ج.م')};
+const NS=()=>'Notification' in window;
+async function notify(t,b){try{const g=await navigator.serviceWorker.getRegistration();if(g)return await g.showNotification(t,{body:b,icon:'icons/icon-192.png',badge:'icons/icon-192.png',dir:'rtl',lang:'ar',tag:'t-'+b,vibrate:[200,100,200]})}catch(e){}try{new Notification(t,{body:b})}catch(e){}}
+const upNb=()=>{$('#nb').textContent=S.notif&&NS()&&Notification.permission==='granted'?'🔔':'🔕'};
+$('#nb').onclick=async()=>{if(!NS())return toast('الإشعارات غير مدعومة هنا. ثبّت التطبيق على الشاشة الرئيسية أولاً');if(Notification.permission==='granted')S.notif=!S.notif;else{const p=await Notification.requestPermission();S.notif=p==='granted';if(p==='denied')return toast('الإشعارات محظورة. فعّلها من إعدادات الموقع في المتصفح')}save();upNb();toast(S.notif?'تم تفعيل الإشعارات 🔔':'تم إيقاف الإشعارات');if(S.notif)notify('Life OS','الإشعارات تعمل ✅')};
+function due(){const n=new Date(),m=n.getHours()*60+n.getMinutes();S.tasks.forEach(t=>{if(t.d||t.al===iso(0))return;const[h,mi]=t.tm.split(':'),x=m-(+h*60+ +mi);if(x>=0&&x<=60){t.al=iso(0);save();toast('⏰ تذكير: '+t.t);if(S.notif&&NS()&&Notification.permission==='granted')notify('⏰ تذكير مهمة',t.t)}})}
+setInterval(due,20000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)due()});upNb();due();
 const H=async x=>[...new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode('lifeos'+x)))].map(b=>b.toString(16).padStart(2,'0')).join('');
 let LM='';
 function lock(m){LM=m;$('#lc').classList.add('on');$('#pn').value='';$('#lt').textContent=m==='u'?'أدخل رمز القفل':'اختر رمزاً من ٤ أرقام';$('#lx').style.display=m==='u'?'none':'';$('#lr').style.display=(m==='s'&&S.pin)?'':'none';$('#pn').focus()}

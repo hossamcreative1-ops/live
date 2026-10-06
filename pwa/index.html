@@ -20,6 +20,10 @@
 
 
 
+
+
+
+
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#EEF2F5;--surf:#fff;--surf2:#E3E9EE;--tx:#16222C;--mu:#6A7B88;--ac:#0F9D8A;--ac2:#6D5BD0;--warn:#D9822B;--bd:#D7DFE6;--sh:0 8px 24px rgba(30,50,70,.08);box-sizing:border-box;padding-top:env(safe-area-inset-top,0px)}
@@ -111,6 +115,21 @@ a.lk.no{color:var(--warn);border-color:var(--warn)}
 .q button{flex:1;border:1px solid var(--bd);background:var(--surf2);color:var(--tx);border-radius:12px;padding:9px 0;font:inherit;cursor:pointer}
 .toast{position:absolute;top:70px;inset-inline:20px;background:var(--tx);color:var(--bg);padding:12px 16px;border-radius:14px;font-size:14px;transform:translateY(-200%);opacity:0;pointer-events:none;transition:transform .3s,opacity .3s;z-index:30}
 .toast.on{transform:none;opacity:1}
+@media(min-width:900px){
+#app{max-width:1240px;display:grid;grid-template-columns:230px 1fr;grid-template-rows:auto 1fr}
+header{grid-column:2;grid-row:1;padding:24px 36px 8px}
+header h1{font-size:28px}
+main{grid-column:2;grid-row:2;padding:8px 36px 36px}
+nav{grid-column:1;grid-row:1/3;flex-direction:column;justify-content:flex-start;gap:6px;border-top:0;border-inline-end:1px solid var(--bd);padding:28px 14px}
+nav button{flex:none;flex-direction:row;gap:12px;font-size:15px;padding:12px 16px;justify-content:flex-start}
+nav button.on{background:var(--surf2)}
+.grid{grid-template-columns:repeat(3,1fr);gap:16px}
+.total{padding:28px}.total b{font-size:42px}
+.sheet{align-items:center;justify-content:center}
+.sheet>div{max-width:440px;border-radius:24px}
+.toast{max-width:440px;margin-inline:auto}
+#cvw{height:68vh!important}
+}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
@@ -150,25 +169,31 @@ const iso=k=>{const d=new Date();d.setDate(d.getDate()-k);return d.toLocaleDateS
 const run=(a,b)=>Array.from({length:b-a+1},(_,i)=>iso(a+i));
 const streak=h=>{let k=h.d.includes(iso(0))?0:1,c=0;while(h.d.includes(iso(k))){c++;k++}return c};
 const S={log:[],rp:'month',sub:0,mood:'🙂',goals:[{t:'إنهاء كورس البرمجة',a:12,g:40,u:'درس'},{t:'ركض ١٠٠ كم',a:35,g:100,u:'كم'}],books:[{t:'العادات الذرية',p:120,n:320}],journal:[{d:iso(0),m:'🙂',x:'يوم هادي، خلّصت أهم مهمة وبدأت كتاب جديد.'}],
- pk:[{n:'مدخرات',i:'🏦',a:12500,g:30000,c:'#0F9D8A',goal:1},{n:'استخدام يومي',i:'☕',a:3200,g:0,c:'#6D5BD0'},{n:'طوارئ',i:'🛟',a:8000,g:15000,c:'#D9822B',goal:1},{n:'أهداف',i:'🎯',a:4800,g:20000,c:'#D2557A',goal:1}],
+ pk:[{n:'مدخرات',i:'🏦',a:12500,g:30000,c:'#0F9D8A',goal:1},{n:'استخدام يومي',i:'☕',a:3200,g:0,c:'#6D5BD0',daily:1},{n:'طوارئ',i:'🛟',a:8000,g:15000,c:'#D9822B',goal:1},{n:'أهداف',i:'🎯',a:4800,g:20000,c:'#D2557A',goal:1}],
  tasks:[{t:'مراجعة ميزانية الأسبوع',tm:'10:00',d:1},{t:'مكالمة مع الفريق',tm:'14:30',d:0},{t:'قراءة ٢٠ صفحة',tm:'21:00',d:0}],
  habits:[{n:'قراءة',d:run(1,6)},{n:'رياضة',d:[...run(1,2),iso(4),iso(6)]},{n:'ادخار يومي',d:run(1,9)}],
  notes:[{id:'n1',ti:'فكرة تطبيق العادات',x:'تطبيق لتتبع العادات مع مكافآت صغيرة #أفكار #مشاريع',t:'٠٩:١٢'},{id:'n2',ti:'ربط الميزانية بالأهداف',x:'انظر [[فكرة تطبيق العادات]] #مالية',t:'٠٩:٤٠'}],isub:0,open:null,edit:false,cv:{cards:[{id:'c1',x:20,y:20,t:'[[فكرة تطبيق العادات]]'},{id:'c2',x:170,y:130,t:'مكافآت صغيرة'},{id:'c3',x:20,y:200,t:'#مشاريع تجريبي'}],edges:[['c1','c2'],['c1','c3']],px:0,py:0,z:1},
  tab:0,sel:null,q:'',tag:null
 };
 try{const j=localStorage.getItem('lifeos2');if(j)Object.assign(S,JSON.parse(j))}catch(e){}
-S.notes.forEach(n=>{if(!n.id)n.id=nid();if(n.ti===undefined){const L=n.x.split('\n');n.ti=L[0].slice(0,50);n.x=L.slice(1).join('\n')}});S.lk=false;S.ce=null;S.sc=null;
+S.notes.forEach(n=>{if(!n.id)n.id=nid();if(n.ti===undefined){const L=n.x.split('\n');n.ti=L[0].slice(0,50);n.x=L.slice(1).join('\n')}});S.lk=false;S.ce=null;S.sc=null;S.pk.forEach(p=>{if(p.n==='استخدام يومي'&&p.daily===undefined)p.daily=1});
 function nid(){return 'n'+Date.now().toString(36)+Math.random().toString(36).slice(2,5)}
 S.tasks.forEach(t=>{if(!t.dt)t.dt=iso(0);if(t.d&&!t.dd)t.dd=t.dt});
 const save=()=>{try{localStorage.setItem('lifeos2',JSON.stringify(S))}catch(e){}};
 const titles=['المالية','الإنجاز','المهام','الأفكار','المزيد'];
 const subs=['مساحاتك المالية في مكان واحد','تقدّمك اليوم','رتّب يومك وذكّر نفسك','ملاحظاتك المترابطة','عاداتك وأهدافك وقراءتك ويومياتك'];
 function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');setTimeout(()=>t.classList.remove('on'),2600)}
+const spend=(a,b)=>S.log.filter(l=>l.dk&&l.dk>=a&&l.dk<=b&&!l.g&&l.v<0&&S.pk[l.i]&&S.pk[l.i].daily).reduce((q,l)=>q-l.v,0);
+const mr=(y,m)=>{const p=y+'-'+String(m+1).padStart(2,'0');return[p+'-01',p+'-31']};
 function fin(){
- const tot=S.pk.reduce((s,p)=>s+p.a,0);
- $('#s0').innerHTML=`<div class="total" style="position:relative"><small>الإجمالي الكلي</small><b>${M(tot)} ج.م</b><button class="ib" data-e="1" aria-label="إخفاء الأرصدة" style="position:absolute;top:14px;inset-inline-end:14px;background:rgba(255,255,255,.2);border:0;color:#fff">${S.hide?'🙈':'👁'}</button></div>
+ const T=iso(0),n=new Date(),cy=n.getFullYear(),cm=n.getMonth(),yr=S.fy||cy;
+ const tot=S.pk.filter(p=>!p.daily).reduce((q,p)=>q+p.a,0),di=S.pk.findIndex(p=>p.daily),dp=S.pk[di];
+ const am=Array.from({length:12},(_,m)=>spend(...mr(yr,m))),yt=am.reduce((q,x)=>q+x,0),mx=Math.max(...am,1),mo=yr===cy?cm+1:12;
+ $('#s0').innerHTML=`<div class="total" style="position:relative"><small>إجمالي المدخرات والطوارئ والأهداف</small><b>${M(tot)} ج.م</b><button class="ib" data-e="1" aria-label="إخفاء الأرصدة" style="position:absolute;top:14px;inset-inline-end:14px;background:rgba(255,255,255,.2);border:0;color:#fff">${S.hide?'🙈':'👁'}</button></div>
  <button class="pb" data-x="1" style="width:100%;margin-top:12px;background:var(--surf);color:var(--tx);border:1px solid var(--bd)">⇄ تحويل بين المساحات</button>
- <h2>مساحاتك</h2><div class="grid">${S.pk.map((p,i)=>`<div class="pk" style="--c:${p.c}"><div class="t"><span>${p.i}</span>${p.n}<button class="ib" data-ge="${i}" aria-label="تعديل الهدف" style="margin-inline-start:auto;width:28px;height:28px;font-size:13px">✎</button></div><div class="a">${M(p.a)} <small>ج.م</small></div>${p.g?`<div class="bar"><i style="width:${Math.min(100,p.a/p.g*100)}%"></i></div>`:'<div class="bar"><i style="width:100%;opacity:.25"></i></div>'}<div class="row"><button data-m="-${i}" aria-label="خصم">−</button><button class="p" data-m="${i}" aria-label="إضافة">+</button></div></div>`).join('')}</div>
+ ${dp?`<div class="card" style="margin-top:12px;--c:${dp.c}"><div class="t" style="display:flex;gap:6px;font-weight:600">${dp.i} المصروف اليومي</div><div style="display:flex;justify-content:space-between;margin:12px 0 4px"><div><small style="color:var(--mu)">صرفت اليوم</small><div style="font-size:24px;font-weight:700;color:var(--warn)">${M(spend(T,T))} <small style="font-size:12px">ج.م</small></div></div><div style="text-align:start"><small style="color:var(--mu)">هذا الشهر</small><div style="font-size:18px;font-weight:700">${M(am[cm]&&yr===cy?am[cm]:spend(...mr(cy,cm)))}</div></div><div><small style="color:var(--mu)">المتاح</small><div style="font-size:18px;font-weight:700">${M(dp.a)}</div></div></div><div class="row"><button class="p" data-m="-${di}" style="--c:var(--warn)">− صرف</button><button data-m="${di}">+ رصيد</button></div></div>`:''}
+ <h2>مساحاتك</h2><div class="grid">${S.pk.map((p,i)=>[p,i]).filter(([p])=>!p.daily).map(([p,i])=>`<div class="pk" style="--c:${p.c}"><div class="t"><span>${p.i}</span>${p.n}<button class="ib" data-ge="${i}" aria-label="تعديل الهدف" style="margin-inline-start:auto;width:28px;height:28px;font-size:13px">✎</button></div><div class="a">${M(p.a)} <small>ج.م</small></div>${p.g?`<div class="bar"><i style="width:${Math.min(100,p.a/p.g*100)}%"></i></div>`:'<div class="bar"><i style="width:100%;opacity:.25"></i></div>'}<div class="row"><button data-m="-${i}" aria-label="خصم">−</button><button class="p" data-m="${i}" aria-label="إضافة">+</button></div></div>`).join('')}</div>
+ <h2>مصروفات السنة</h2><div class="card"><div class="hb" style="border:0;padding:0 0 10px"><div class="row" style="margin:0;align-items:center"><button data-fy="-1" aria-label="السنة السابقة" style="padding:2px 12px">›</button><b style="padding:0 8px">${N(yr).replace(/٬/g,'')}</b><button data-fy="1" aria-label="السنة التالية" style="padding:2px 12px">‹</button></div><div style="text-align:start"><b style="font-size:17px;color:var(--warn)">${M(yt)} ج.م</b><br><small style="color:var(--mu)">متوسط الشهر ${M(yt/mo)}</small></div></div>${am.map((a,m)=>`<div class="gl"><div><span>${new Date(yr,m,1).toLocaleDateString('ar-EG',{month:'long'})}${yr===cy&&m===cm?' ●':''}</span><b style="${a?'':'color:var(--mu);font-weight:400'}">${M(a)}</b></div><div class="bar" style="display:block"><i style="width:${a/mx*100}%;background:var(--warn)"></i></div></div>`).join('')}</div>
  <h2>آخر العمليات</h2><div class="card">${S.log.length?S.log.slice(-5).reverse().map((l,k)=>`<div class="hb"><div><div class="n">${S.pk[l.i].n}</div><small style="color:var(--mu)">${l.t}</small></div><div><b style="color:${l.v>0?'var(--ac)':'var(--warn)'}">${l.v>0?'+':'−'}${N(Math.abs(l.v))}</b>${k===0?' <button class="ck" data-u="1">تراجع</button>':''}</div></div>`).join(''):'<div class="empty" style="padding:8px 0">لا توجد عمليات بعد. استخدم + أو − على أي مساحة.</div>'}</div>`;
 }
 function ring(pc,col,sz=110,w=11){const r=(sz-w)/2,c=2*Math.PI*r;return`<svg width="${sz}" height="${sz}"><circle cx="${sz/2}" cy="${sz/2}" r="${r}" fill="none" stroke="var(--surf2)" stroke-width="${w}"/><circle cx="${sz/2}" cy="${sz/2}" r="${r}" fill="none" stroke="${col}" stroke-width="${w}" stroke-linecap="round" stroke-dasharray="${c}" stroke-dashoffset="${c*(1-pc/100)}" style="transition:stroke-dashoffset .6s"/></svg>`}
@@ -184,7 +209,7 @@ const rng=()=>{const n=new Date(),T=iso(0),y=n.getFullYear(),m=n.getMonth(),f=d=
 function rep(){const{a,b}=rng(),T=iso(0),inr=x=>x&&x>=a&&x<=b,e=b<T?b:T;
  const due=S.tasks.filter(t=>inr(t.dt)),ok=due.filter(t=>t.d).length,late=due.filter(t=>!t.d&&t.dt<T).length,dn=S.tasks.filter(t=>inr(t.dd)).length,pc=due.length?ok/due.length*100:0;
  const days=Math.max(1,Math.round((new Date(e+'T12:00')-new Date(a+'T12:00'))/864e5)+1);
- const fl=S.log.filter(l=>inr(l.dk)&&!l.g),inn=fl.filter(l=>l.v>0).reduce((q,l)=>q+l.v,0),out=fl.filter(l=>l.v<0).reduce((q,l)=>q-l.v,0),jr=S.journal.filter(j=>inr(j.d)).length;
+ const fl=S.log.filter(l=>inr(l.dk)&&!l.g),inn=fl.filter(l=>l.v>0).reduce((q,l)=>q+l.v,0),out=fl.filter(l=>l.v<0&&S.pk[l.i]&&S.pk[l.i].daily).reduce((q,l)=>q-l.v,0),jr=S.journal.filter(j=>inr(j.d)).length;
  return `<h2>تقرير الفترة</h2><div class="chips">${[['today','اليوم'],['7','٧ أيام'],['month','الشهر'],['year','السنة'],['c','مخصص']].map(([k,n])=>`<button class="chip ${S.rp===k?'on':''}" data-rp="${k}">${n}</button>`).join('')}</div>${S.rp==='c'?`<div class="add" style="margin:8px 0"><input type="date" id="ra" value="${a}" aria-label="من"><input type="date" id="rb" value="${b}" aria-label="إلى"></div>`:''}
  <div class="card"><small style="color:var(--mu)">${fd(a)} ← ${fd(b)}</small>
  <div class="gl" style="margin-top:12px"><div><span>✅ المهام المنجزة</span><b>${N(ok)} من ${N(due.length)} · ${P(pc)}</b></div><div class="bar" style="display:block"><i style="width:${pc}%"></i></div></div>
@@ -192,7 +217,7 @@ function rep(){const{a,b}=rng(),T=iso(0),inr=x=>x&&x>=a&&x<=b,e=b<T?b:T;
  <div class="hb"><span>مهام أُنجزت خلال الفترة</span><b>${N(dn)}</b></div>
  ${S.habits.map(h=>{const c=h.d.filter(x=>x>=a&&x<=e).length,v=Math.min(100,c/days*100);return`<div class="gl" style="margin-top:12px"><div><span>🔥 ${esc(h.n)}</span><b>${N(c)} من ${N(days)} يوم · ${P(v)}</b></div><div class="bar" style="display:block"><i style="width:${v}%;background:var(--ac2)"></i></div></div>`}).join('')}
  <div class="hb"><span>إضافات مالية</span><b style="color:var(--ac)">+${N(inn)}</b></div>
- <div class="hb"><span>مصروفات وخصومات</span><b style="color:var(--warn)">−${N(out)}</b></div>
+ <div class="hb"><span>المصروف اليومي</span><b style="color:var(--warn)">−${N(out)}</b></div>
  <div class="hb" style="border:0"><span>يوميات مكتوبة</span><b>${N(jr)}</b></div></div>`}
 function tasks(){
  const T=iso(0),all=S.tasks.map((t,i)=>[i,t]);
@@ -253,7 +278,7 @@ function go(i){S.tab=i;$$('section').forEach((s,j)=>s.classList.toggle('on',j===
 $$('nav button').forEach(b=>b.onclick=()=>go(+b.dataset.i));
 $('#th').onclick=()=>{const d=document.documentElement,cur=d.dataset.theme||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');d.dataset.theme=cur==='dark'?'light':'dark'};
 document.addEventListener('click',e=>{
- const t=e.target.closest('[data-m],[data-h],[data-r],[data-g],[data-l],[data-d],[data-q],[data-bu],[data-is],[data-nn],[data-o],[data-bk],[data-ed],[data-dn],[data-ca],[data-cz],[data-ce],[data-cl],[data-cd],[data-cx],[data-rp],[data-ge],[data-u],[data-e],[data-x],[data-s],[data-hx],[data-gm],[data-gp],[data-gx],[data-bp],[data-bx],[data-mo],[data-jx]');if(!t)return;
+ const t=e.target.closest('[data-m],[data-h],[data-r],[data-g],[data-l],[data-d],[data-q],[data-fy],[data-bu],[data-is],[data-nn],[data-o],[data-bk],[data-ed],[data-dn],[data-ca],[data-cz],[data-ce],[data-cl],[data-cd],[data-cx],[data-rp],[data-ge],[data-u],[data-e],[data-x],[data-s],[data-hx],[data-gm],[data-gp],[data-gx],[data-bp],[data-bx],[data-mo],[data-jx]');if(!t)return;
  const D=t.dataset;
  if(D.m!==undefined){const v=+D.m,i=Math.abs(v);S.mode='m';$('#tr').style.display='none';S.sel=i;S.sign=D.m.startsWith('-')?-1:1;$('#sht').textContent=(S.sign>0?'إضافة إلى ':'خصم من ')+S.pk[i].n;$('#amt').value='';$('#sh').classList.add('on');$('#amt').focus()}
  else if(D.u){let l=S.log.pop();if(l){do{S.pk[l.i].a-=l.v}while(l.g&&S.log.length&&S.log[S.log.length-1].g===l.g&&(l=S.log.pop()));save();fin();toast('تم التراجع عن العملية')}}
@@ -271,6 +296,7 @@ document.addEventListener('click',e=>{
  else if(D.x){S.mode='t';$('#sht').textContent='تحويل بين المساحات';const o=S.pk.map((p,i)=>`<option value="${i}">${p.n}</option>`).join('');$('#fr').innerHTML=o;$('#to').innerHTML=o;$('#to').value=1;$('#tr').style.display='flex';$('#amt').value='';$('#sh').classList.add('on')}
  else if(D.ge!==undefined){S.mode='g';S.sel=+D.ge;const p=S.pk[S.sel];$('#sht').textContent='الهدف المستهدف لـ '+p.n+' (0 لإلغائه)';$('#tr').style.display='none';$('#amt').value=p.g||'';$('#sh').classList.add('on')}
  else if(D.rp){S.rp=D.rp;if(D.rp==='c'){S.ca=S.ca||iso(30);S.cb=S.cb||iso(0)}save();ana()}
+ else if(D.fy){S.fy=(S.fy||new Date().getFullYear())+ +D.fy;save();fin()}
  else if(D.q)$('#amt').value=(+$('#amt').value||0)+ +D.q;
  else if(D.h!==undefined){const h=S.habits[+D.h];const t=iso(0);if(!h.d.includes(t)){h.d.push(t);toast('🔥 سلسلة '+N(streak(h))+' يوم، استمر!')}else h.d=h.d.filter(x=>x!==t);save();go(S.tab)}
  else if(D.r!==undefined){S.tasks.splice(+D.r,1);save();tasks()}

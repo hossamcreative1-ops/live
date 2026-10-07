@@ -24,6 +24,7 @@
 
 
 
+
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#EEF2F5;--surf:#fff;--surf2:#E3E9EE;--tx:#16222C;--mu:#6A7B88;--ac:#0F9D8A;--ac2:#6D5BD0;--warn:#D9822B;--bd:#D7DFE6;--sh:0 8px 24px rgba(30,50,70,.08);box-sizing:border-box;padding-top:env(safe-area-inset-top,0px)}
@@ -334,6 +335,12 @@ $('#lr').onclick=()=>{S.pin=null;save();$('#lc').classList.remove('on');toast('�
 $('#lo').onclick=async()=>{const v=$('#pn').value.replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d));if(!/^\d{4}$/.test(v))return toast('الرمز يتكون من ٤ أرقام');let h;try{h=await H(v)}catch(e){return toast('القفل غير متاح في هذا المتصفح')}if(LM==='u'){if(h===S.pin)$('#lc').classList.remove('on');else{toast('رمز غير صحيح');$('#pn').value=''}}else{S.pin=h;save();$('#lc').classList.remove('on');toast('تم تفعيل القفل')}};
 if(S.pin)lock('u');
 go(S.tab||0);
+(()=>{const a=new URLSearchParams(location.search).get('a');if(!a)return;
+ if(a==='expense'){go(0);const di=S.pk.findIndex(p=>p.daily),b=di>=0&&$('[data-m="-'+di+'"]');if(b)b.click()}
+ else if(a==='task'){go(2);$('#tt').focus()}
+ else if(a==='note'){S.open=null;S.isub=0;go(3);const b=$('[data-nn]');if(b)b.click()}
+ else if(a==='habit'){S.sub=0;go(4)}
+ try{history.replaceState(null,'',location.pathname)}catch(e){}})();
 if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
 </script>
 </body>

@@ -159,7 +159,7 @@ nav button.on{background:var(--surf2)}
 </head>
 <body>
 <div id="app">
-<header><div><h1 id="ttl">المالية</h1><p id="sub"></p></div><div style="display:flex;gap:8px"><button class="ib" id="nb" aria-label="الإشعارات">🔕</button><button class="ib" id="lk" aria-label="قفل التطبيق">🔒</button><button class="ib" id="th" aria-label="تبديل المظهر">◐</button></div></header>
+<header><div><h1 id="ttl">المالية</h1><p id="sub"></p></div><div style="display:flex;gap:8px"><button class="ib" id="sy" aria-label="المزامنة بين الأجهزة">☁</button><button class="ib" id="nb" aria-label="الإشعارات">🔕</button><button class="ib" id="lk" aria-label="قفل التطبيق">🔒</button><button class="ib" id="th" aria-label="تبديل المظهر">◐</button></div></header>
 <main>
 <section id="s0"></section>
 <section id="s1"></section>
@@ -205,7 +205,8 @@ S.notes.forEach(n=>{if(!n.id)n.id=nid();if(n.ti===undefined){const L=n.x.split('
 function nid(){return 'n'+Date.now().toString(36)+Math.random().toString(36).slice(2,5)}
 S.sleep=S.sleep||[];S.wo=0;S.tw=0;S.sub=0;
 S.tasks.forEach(t=>{if(!t.dt)t.dt=iso(0);if(t.d&&!t.dd)t.dd=t.dt});
-const save=()=>{try{localStorage.setItem('lifeos2',JSON.stringify(S))}catch(e){if(!save.w){save.w=1;setTimeout(()=>toast('تعذّر الحفظ على الجهاز. صدّر نسخة احتياطية الآن'),0)}}};
+const SY={ref:null,busy:0,dirty:0,t:null,applying:0,st:'off'};
+const save=()=>{if(!SY.applying)S.ts=Date.now();try{localStorage.setItem('lifeos2',JSON.stringify(S))}catch(e){if(!save.w){save.w=1;setTimeout(()=>toast('تعذّر الحفظ على الجهاز. صدّر نسخة احتياطية الآن'),0)}}syncSoon()};
 const titles=['المالية','الإنجاز','المهام','الأفكار','المزيد','الرئيسية'];
 const subs=['مساحاتك المالية في مكان واحد','تقدّمك اليوم','رتّب يومك وذكّر نفسك','ملاحظاتك المترابطة','عاداتك وأهدافك وقراءتك ويومياتك',''];
 function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');setTimeout(()=>t.classList.remove('on'),2600)}
@@ -451,6 +452,28 @@ document.addEventListener('click',e=>{const t=e.target.closest('[data-wo],[data-
  else if(D.tw!==undefined){S.tw=D.tw==='r'?0:(S.tw||0)+ +D.tw;save();tasks()}
  else if(D.zsl){S.sleep=S.sleep.filter(x=>x.d!==D.zsl);save();more()}
 });
+
+/* ---- المزامنة بين الأجهزة (db خاص بالمستخدم) ---- */
+const LOC=['tab','sub','wo','tw','pin','notif','hide','q','tag','sel','open','edit','isub','mood','mode','sign','lk','ce','sc','rp','ca','cb','fy','lb','ts'];
+const SYM={off:'المزامنة تشتغل لما تفتح التطبيق من رابط claude.ai وانت مسجّل دخول بنفس الحساب على الجهازين',wait:'جارٍ الاتصال بالمزامنة…',ok:'متزامن مع حسابك ✓',busy:'جارٍ المزامنة…',err:'تعذّرت المزامنة، هتتعاد تلقائيًا',big:'حجم البيانات كبير على المزامنة. صدّر نسخة احتياطية وقلل الملاحظات الكبيرة'};
+function setSt(st){SY.st=st;const b=$('#sy');if(!b)return;b.textContent=st==='busy'?'⟳':st==='err'||st==='big'?'⚠':'☁';b.style.opacity=st==='off'?.45:1;b.style.color=st==='ok'?'var(--ac)':(st==='err'||st==='big')?'var(--warn)':''}
+$('#sy').onclick=()=>toast(SYM[SY.st]);setSt('off');
+const snapS=()=>{const o={};for(const k in S)if(!LOC.includes(k))o[k]=S[k];return o};
+function syncSoon(){if(!SY.ref||SY.applying)return;clearTimeout(SY.t);SY.t=setTimeout(push,1500)}
+async function push(){if(!SY.ref)return;if(SY.busy){SY.dirty=1;return}SY.busy=1;setSt('busy');
+ try{const j=JSON.stringify(snapS());if(j.length>200000){setSt('big');return}await SY.ref.set({v:1,ts:S.ts||Date.now(),s:j});setSt('ok')}
+ catch(e){setSt(e&&e.code==='quota_exceeded'||e&&e.code==='invalid_argument'?'big':'err');if(!(e&&(e.code==='quota_exceeded'||e.code==='invalid_argument')))setTimeout(syncSoon,15000)}
+ finally{SY.busy=0;if(SY.dirty){SY.dirty=0;push()}}}
+function pull(d){let r;try{r=JSON.parse(d.s)}catch(e){return}
+ if(!S.ts){try{localStorage.setItem('lifeos2_pre_sync',JSON.stringify(S))}catch(e){}}
+ SY.applying=1;try{for(const k of Object.keys(r))S[k]=r[k];S.sleep=S.sleep||[];S.ts=d.ts;save()}finally{SY.applying=0}
+ const a=document.activeElement;if(a&&/INPUT|TEXTAREA|SELECT/.test(a.tagName))toast('تم تحديث بياناتك من جهاز آخر');else go(S.tab)}
+(async()=>{try{if(!(window.claude&&claude.use)){return}setSt('wait');
+ const[db,user]=await Promise.all([claude.use('db'),claude.use('user')]);if(!db||!user)return setSt('off');
+ const id=await user.id();if(!id)return setSt('off');
+ SY.ref=db.collection('data/users/'+id).doc('lifeos');setSt('ok');
+ SY.ref.onSnapshot(sn=>{if(!sn.exists){save();return}const d=sn.data();if(!d||!d.s)return;if(d.ts>(S.ts||0))pull(d);else if((S.ts||0)>d.ts)syncSoon();setSt('ok')},()=>setSt('err'))
+}catch(e){setSt('off')}})();
 try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist()}catch(e){}
 </script>
 </body>
